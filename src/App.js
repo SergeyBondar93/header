@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 
 
-const headerStyles = { width: '1000px', height: '50px', border: '1px solid black', position: 'relative', top: '400px', left: '300px' };
+const headerStyles = { width: '1000px', height: '50px', border: '1px solid black', position: 'relative', top: '400px', left: '100px' };
 const cellStyles = { outline: '1px solid black', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left' };
 
 const App = ({ columns }) => {
@@ -15,6 +15,7 @@ const App = ({ columns }) => {
   const [mouseMove, changeMouseMove] = useState(0);
   const [startCoord, changeStartCoord] = useState(0)
   const triggerChange = useRef(0)
+  const startClickX = useRef(0)
 
   const handleMouseMove = (e) => {
     const { clientX } = e
@@ -33,6 +34,7 @@ const App = ({ columns }) => {
           [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current - 1]] = [newMappedColumns[emptyColumn.current - 1], newMappedColumns[emptyColumn.current]]
           mappedColumns.current = newMappedColumns
           emptyColumn.current = emptyColumn.current - 1;
+          clickX.current = clientX
         }
       }
     } else if (moveMouse > 0) {
@@ -42,46 +44,29 @@ const App = ({ columns }) => {
       if (columns[emptyColumn.current + 1]) {
 
         const lastCols = columns.slice(movingColumnIndex.current, (emptyColumn.current || 0)).reduce((acc, el) => acc + el.width, 0)
-        const lastColsMinOne = columns
-          .slice(
-            movingColumnIndex.current,
-            (emptyColumn.current || 0) > 0 ? emptyColumn.current - 1 : 0)
-          .reduce((acc, el) => acc + el.width, 0)
-        console.log('MoveMouse ', moveMouse)
-        console.log('Last cols ', lastCols)
-        console.log('Last cols min one ', lastColsMinOne)
-        console.log('Next column ', columns[emptyColumn.current + 1])
-        console.log('Prev  column ', columns[emptyColumn.current - 1])
-
+        // const lastColsMinOne = columns
+        //   .slice(
+        //     movingColumnIndex.current,
+        //     (emptyColumn.current || 0) > 0 ? emptyColumn.current - 1 : 0)
+        //   .reduce((acc, el) => acc + el.width, 0);
 
 
 
         if (moveMouse - lastCols > (columns[emptyColumn.current + 1].width / 2)) {
-          console.log('вперёд')
           triggerChange.current = moveMouse;
 
           let newMappedColumns = [...mappedColumns.current];
           [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current + 1]] = [newMappedColumns[emptyColumn.current + 1], newMappedColumns[emptyColumn.current]]
           mappedColumns.current = newMappedColumns
           emptyColumn.current = emptyColumn.current + 1;
+          clickX.current = clientX
         }
 
-        if (moveMouse < triggerChange.current) {
-          // console.log('назад', moveMouse, triggerChange.current, (mappedColumns.current[emptyColumn.current - 1] || {}).width, (mappedColumns.current[emptyColumn.current - 1] || {}).headerName);
-          // triggerChange.current = (mappedColumns.current[emptyColumn.current] || {}).width;
-          // let newMappedColumns = [...mappedColumns.current];
-          // [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current - 1]] = [newMappedColumns[emptyColumn.current - 1], newMappedColumns[emptyColumn.current]]
-          // mappedColumns.current = newMappedColumns
-          // emptyColumn.current = emptyColumn.current - 1;
-
-
-
-        }
 
 
       }
     }
-    changeMouseMove(moveMouse)
+    changeMouseMove(clientX - startClickX.current)
 
   }
 
@@ -99,6 +84,7 @@ const App = ({ columns }) => {
 
   const handleMouseDown = (e, i) => {
     clickX.current = e.clientX;
+    startClickX.current = e.clientX
     const coords = e.target.getBoundingClientRect();
     changeStartCoord(coords.left - headerRef.current.getBoundingClientRect().left);
     changeIsMoving(true);
