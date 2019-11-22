@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 
-const headerStyles = { width: '1000px', height: '50px', border: '1px solid black', position: 'relative', top: '400px', left: '100px' };
+const headerStyles = { height: '50px', border: '1px solid black', position: 'relative', top: '400px' };
 const cellStyles = { outline: '1px solid black', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', float: 'left' };
 
 const App = ({ columns }) => {
@@ -45,8 +45,11 @@ const App = ({ columns }) => {
 
         const lastCols = columns.slice(movingColumnIndex.current, (emptyColumn.current || 0)).reduce((acc, el) => acc + el.width, 0)
 
-        if (moveMouse - lastCols / 2 > (columns[emptyColumn.current + 1].width / 2)) {
-          console.log('ВПЕРЁД', moveMouse, lastCols, (columns[emptyColumn.current + 1].width / 2), emptyColumn.current)
+        // console.log('ВПЕРЁД', moveMouse, lastCols / 2, (columns[emptyColumn.current + 1].width / 2))
+        // if (moveMouse - lastCols / 2 > (columns[emptyColumn.current + 1].width / 2)) console.error(true)
+        // else console.log(false)
+
+        if (moveMouse * 2 - lastCols / 2 > (columns[emptyColumn.current + 1].width / 2)) {
           triggerChange.current = moveMouse;
 
           let newMappedColumns = [...mappedColumns.current];
@@ -90,7 +93,7 @@ const App = ({ columns }) => {
   }
 
   return (
-    <div ref={headerRef} style={headerStyles} >
+    <div ref={headerRef} style={{ ...headerStyles, width: mappedColumns.current.reduce((acc, el) => acc + el.width, 0) }} >
       {mappedColumns.current.map((el, index) =>
         <div
           key={el.headerName}
