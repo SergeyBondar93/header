@@ -26,10 +26,7 @@ const App = ({ columns }) => {
 
       if (movingElem.left <= headerRect.left) return
       if (columns[emptyColumn.current - 1]) {
-
-        const lastCols = columns.slice((emptyColumn.current || 0), movingColumnIndex.current).reduce((acc, el) => acc + el.width, 0)
-
-        if (-moveMouse - lastCols / 2 > (columns[emptyColumn.current - 1].width / 2)) {
+        if (-moveMouse > (columns[emptyColumn.current - 1].width)) {
           let newMappedColumns = [...mappedColumns.current];
           [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current - 1]] = [newMappedColumns[emptyColumn.current - 1], newMappedColumns[emptyColumn.current]]
           mappedColumns.current = newMappedColumns
@@ -38,18 +35,10 @@ const App = ({ columns }) => {
         }
       }
     } else if (moveMouse > 0) {
-
-
       if (movingElem.right >= headerRect.right) return
       if (columns[emptyColumn.current + 1]) {
 
-        const lastCols = columns.slice(movingColumnIndex.current, (emptyColumn.current || 0)).reduce((acc, el) => acc + el.width, 0)
-
-        // console.log('ВПЕРЁД', moveMouse, lastCols / 2, (columns[emptyColumn.current + 1].width / 2))
-        // if (moveMouse - lastCols / 2 > (columns[emptyColumn.current + 1].width / 2)) console.error(true)
-        // else console.log(false)
-
-        if (moveMouse * 2 - lastCols / 2 > (columns[emptyColumn.current + 1].width / 2)) {
+        if (moveMouse > (columns[emptyColumn.current + 1].width)) {
           triggerChange.current = moveMouse;
 
           let newMappedColumns = [...mappedColumns.current];
