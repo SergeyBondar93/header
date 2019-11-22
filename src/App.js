@@ -14,38 +14,38 @@ const App = ({ columns }) => {
   const emptyColumn = useRef(null);
   const [mouseMove, changeMouseMove] = useState(0);
   const [startCoord, changeStartCoord] = useState(0)
-  const triggerChange = useRef(0)
   const startClickX = useRef(0)
+
+
+
 
   const handleMouseMove = (e) => {
     const { clientX } = e
-    const moveMouse = clientX - clickX.current;
     const movingElem = e.target.getBoundingClientRect();
+    const moveMouse = clientX - clickX.current;
     const headerRect = headerRef.current.getBoundingClientRect();
     if (moveMouse < 0) {
 
       if (movingElem.left <= headerRect.left) return
       if (columns[emptyColumn.current - 1]) {
-        if (-moveMouse > (columns[emptyColumn.current - 1].width)) {
+        if (-moveMouse >= (columns[emptyColumn.current - 1].width)) {
+          clickX.current -= columns[emptyColumn.current].width
           let newMappedColumns = [...mappedColumns.current];
           [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current - 1]] = [newMappedColumns[emptyColumn.current - 1], newMappedColumns[emptyColumn.current]]
           mappedColumns.current = newMappedColumns
           emptyColumn.current = emptyColumn.current - 1;
-          clickX.current = clientX
         }
       }
     } else if (moveMouse > 0) {
       if (movingElem.right >= headerRect.right) return
       if (columns[emptyColumn.current + 1]) {
 
-        if (moveMouse > (columns[emptyColumn.current + 1].width)) {
-          triggerChange.current = moveMouse;
-
+        if (moveMouse >= (columns[emptyColumn.current + 1].width)) {
+          clickX.current += columns[emptyColumn.current].width
           let newMappedColumns = [...mappedColumns.current];
           [newMappedColumns[emptyColumn.current], newMappedColumns[emptyColumn.current + 1]] = [newMappedColumns[emptyColumn.current + 1], newMappedColumns[emptyColumn.current]]
           mappedColumns.current = newMappedColumns
           emptyColumn.current = emptyColumn.current + 1;
-          clickX.current = clientX
         }
 
 
